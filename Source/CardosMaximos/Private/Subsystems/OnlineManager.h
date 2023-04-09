@@ -5,9 +5,6 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PlayFab.h"
-#include "Core/PlayFabError.h"
-#include "Core/PlayFabClientDataModels.h"
-#include "Logger.h"
 #include "OnlineManager.generated.h"
 
 /**
@@ -22,12 +19,12 @@ class UOnlineManager : public UGameInstanceSubsystem
    	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
    	virtual void Deinitialize() override;
    	// --------
-  
-  // public:
-  // 	void OnSuccess(const PlayFab::ClientModels::FLoginResult& Result) const;
-  // 	void OnError(const PlayFab::FPlayFabCppError& ErrorResult) const;
-  // 	
-  // private:
-  // 	PlayFabClientPtr m_clientAPI = nullptr; 	
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void OnRegister(FString Email, FString Password, FString UserName);
+
+private:
+  	PlayFabClientPtr m_clientAPI = nullptr; 	
 	
 };

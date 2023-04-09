@@ -19,5 +19,30 @@ class UUIManager : public UGameInstanceSubsystem
 	virtual void Deinitialize() override;
 	// --------
 
+public:
 
+	// Getters
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FString GetUserName();
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FString GetUserEmail();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FString GetUserPassword();
+
+	//Setters
+	UFUNCTION(BlueprintCallable)
+	void SetUserName(FString UserName);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetUserEmail(FString UserName);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetUserPassword(FString UserName);
+	
+private:
+	FString m_userName;
+	FString m_userEmail;
+	FString m_userPassword;
 };
