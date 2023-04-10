@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PlayFab.h"
+#include "PlayFabClientDataModels.h"
+#include "PlayFabError.h"
 #include "OnlineManager.generated.h"
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLoginCallback, bool, HasSucceeded);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FRegisterCallback, bool, HasSucceeded);
 
 /**
  * 
@@ -21,10 +26,16 @@ class UOnlineManager : public UGameInstanceSubsystem
    	// --------
 
 public:
+	
 	UFUNCTION(BlueprintCallable)
-	void OnRegister(FString Email, FString Password, FString UserName);
+	void SignInUser(FLoginCallback LoginCallback, FString Email, FString Password);
+
+	UFUNCTION(BlueprintCallable)
+	void RegisterNewUser(FRegisterCallback RegisterCallback, FString Email, FString Password, FString UserName);
 
 private:
-  	PlayFabClientPtr m_clientAPI = nullptr; 	
 	
+private:
+  	PlayFabClientPtr m_clientAPI = nullptr; 	
+
 };

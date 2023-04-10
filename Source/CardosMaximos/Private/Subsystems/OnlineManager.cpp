@@ -9,8 +9,8 @@ void UOnlineManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	// PlayFab init
 	m_clientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
-
 	UPlayFabUtilities::setPlayFabSettings("916E4", "B91YQQJRZ8JGBY7UTCSZXPY419PQ9Y743A6R96MXB18GJOTE85");
 }
 
@@ -19,7 +19,7 @@ void UOnlineManager::Deinitialize()
 	Super::Deinitialize();
 }
 
-void UOnlineManager::OnRegister(FString Email, FString Password, FString UserName)
+void UOnlineManager::RegisterNewUser(FRegisterCallback RegisterCallback, FString Email, FString Password, FString UserName)
 {
 	if(!m_clientAPI)
 		return;
@@ -29,13 +29,34 @@ void UOnlineManager::OnRegister(FString Email, FString Password, FString UserNam
 	request.Password = Password;
 	request.Username = UserName;
 
-	m_clientAPI->RegisterPlayFabUser(request, PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateLambda([](const PlayFab::ClientModels::FRegisterPlayFabUserResult& result)
+	m_clientAPI->RegisterPlayFabUser(request,
+PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateLambda([RegisterCallback](const PlayFab::ClientModels::FRegisterPlayFabUserResult& result)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ONLINE MANAGER : ONREGISTER : %s"), *result.Username);
+			if(RegisterCallback.IsBound())
+            		RegisterCallback.Execute(true);
 		}),
-		PlayFab::FPlayFabErrorDelegate::CreateLambda([](const PlayFab::FPlayFabCppError& error)
+			PlayFab::FPlayFabErrorDelegate::CreateLambda([RegisterCallback](const PlayFab::FPlayFabCppError& error)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ONLINE MANAGER : ONREGISTER ERROR"));
+			if(RegisterCallback.IsBound())
+				RegisterCallback.Execute(false);
+		}));
+}
+
+void UOnlineManager::SignInUser(FLoginCallback LoginCallback, FString Email, FString Password)
+{
+	PlayFab::ClientModels::FLoginWithEmailAddressRequest Request;
+	Request.Email = Email;
+	Request.Password = Password;
+
+	m_clientAPI->LoginWithEmailAddress(Request,
+	PlayFab::UPlayFabClientAPI::FLoginWithEmailAddressDelegate::CreateLambda([LoginCallback](const PlayFab::ClientModels::FLoginResult& result)
+		{
+			if(LoginCallback.IsBound())
+				LoginCallback.Execute(true);
+		}), PlayFab::FPlayFabErrorDelegate::CreateLambda([LoginCallback](const PlayFab::FPlayFabCppError& error)
+		{
+			if(LoginCallback.IsBound())
+				LoginCallback.Execute(false);
 		}));
 }
 
