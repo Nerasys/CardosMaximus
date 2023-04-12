@@ -9,8 +9,8 @@
 #include "PlayFabError.h"
 #include "OnlineManager.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FLoginCallback, bool, HasSucceeded);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FRegisterCallback, bool, HasSucceeded);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FLoginCallback, bool, HasSucceeded, FString, Msg);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FRegisterCallback, bool, HasSucceeded, FString, Msg);
 
 /**
  * 

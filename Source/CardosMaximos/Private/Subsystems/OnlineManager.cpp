@@ -33,12 +33,12 @@ void UOnlineManager::RegisterNewUser(FRegisterCallback RegisterCallback, FString
 PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateLambda([RegisterCallback](const PlayFab::ClientModels::FRegisterPlayFabUserResult& result)
 		{
 			if(RegisterCallback.IsBound())
-            		RegisterCallback.Execute(true);
+            		RegisterCallback.Execute(true, "User Registration Succeeded");
 		}),
 			PlayFab::FPlayFabErrorDelegate::CreateLambda([RegisterCallback](const PlayFab::FPlayFabCppError& error)
 		{
 			if(RegisterCallback.IsBound())
-				RegisterCallback.Execute(false);
+				RegisterCallback.Execute(false, error.ErrorMessage);
 		}));
 }
 
@@ -52,11 +52,11 @@ void UOnlineManager::SignInUser(FLoginCallback LoginCallback, FString Email, FSt
 	PlayFab::UPlayFabClientAPI::FLoginWithEmailAddressDelegate::CreateLambda([LoginCallback](const PlayFab::ClientModels::FLoginResult& result)
 		{
 			if(LoginCallback.IsBound())
-				LoginCallback.Execute(true);
+				LoginCallback.Execute(true, "Login Succeded");
 		}), PlayFab::FPlayFabErrorDelegate::CreateLambda([LoginCallback](const PlayFab::FPlayFabCppError& error)
 		{
 			if(LoginCallback.IsBound())
-				LoginCallback.Execute(false);
+				LoginCallback.Execute(false, error.ErrorMessage);
 		}));
 }
 
