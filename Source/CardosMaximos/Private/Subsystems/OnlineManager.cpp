@@ -87,6 +87,32 @@ void UOnlineManager::GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback)
 	));
 }
 
+void UOnlineManager::GetPlayerInventory(FGetPlayerInventoryCallback GetPlayerInventoryCallback)
+{
+	if(!m_clientAPI || !IsPlayerLoggedIn())
+		return;
+
+	PlayFab::ClientModels::FGetUserInventoryRequest Request;
+
+	m_clientAPI->GetUserInventory(Request, PlayFab::UPlayFabClientAPI::FGetUserInventoryDelegate::CreateLambda([GetPlayerInventoryCallback](const PlayFab::ClientModels::FGetUserInventoryResult& Result)
+	{
+		FString Ret = "ABCurrency Amount : ";
+		for(auto Currency : Result.VirtualCurrency)
+		{
+			if(Currency.Key == "AB")
+				Ret.Append(FString::FromInt(Currency.Value));
+		}
+
+		if(GetPlayerInventoryCallback.IsBound())
+			GetPlayerInventoryCallback.Execute(true, Ret);
+		
+	}), PlayFab::FPlayFabErrorDelegate::CreateLambda([GetPlayerInventoryCallback](const PlayFab::FPlayFabCppError& error)
+	{
+		if(GetPlayerInventoryCallback.IsBound())
+			GetPlayerInventoryCallback.Execute(false, error.ErrorMessage);
+	}));
+}
+
 bool UOnlineManager::IsPlayerLoggedIn()
 {
 	return m_playerLogged;

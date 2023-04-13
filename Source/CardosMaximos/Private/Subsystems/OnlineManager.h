@@ -13,6 +13,7 @@ DECLARE_DYNAMIC_DELEGATE_TwoParams(FLoginCallback, bool, HasSucceeded, FString, 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FRegisterCallback, bool, HasSucceeded, FString, Msg);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FSetPlayerDataCallback, bool, HasSucceeded, FString, Msg);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FGetPlayerDataCallback, bool, HasSucceeded, FString, Msg);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FGetPlayerInventoryCallback, bool, HasSucceeded, FString, Msg);
 
 /**
  * 
@@ -41,9 +42,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback);
 
+	UFUNCTION(BlueprintCallable)
+	void GetPlayerInventory(FGetPlayerInventoryCallback GetPlayerInventoryCallback);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsPlayerLoggedIn();
-	
+
 private:
   	PlayFabClientPtr m_clientAPI = nullptr;
 
