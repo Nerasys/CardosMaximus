@@ -2,6 +2,8 @@
 
 
 #include "Subsystems/OnlineManager.h"
+
+#include "CircleTypes.h"
 #include "Core/PlayFabClientAPI.h"
 #include "PlayFabUtilities.h"
 
@@ -24,12 +26,12 @@ void UOnlineManager::RegisterNewUser(FRegisterCallback RegisterCallback, FString
 	if(!m_clientAPI)
 		return;
 	
-	PlayFab::ClientModels::FRegisterPlayFabUserRequest request;
-	request.Email = Email;
-	request.Password = Password;
-	request.Username = UserName;
+	PlayFab::ClientModels::FRegisterPlayFabUserRequest Request;
+	Request.Email = Email;
+	Request.Password = Password;
+	Request.Username = UserName;
 
-	m_clientAPI->RegisterPlayFabUser(request,
+	m_clientAPI->RegisterPlayFabUser(Request,
 PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateLambda([RegisterCallback](const PlayFab::ClientModels::FRegisterPlayFabUserResult& result)
 		{
 			if(RegisterCallback.IsBound())
@@ -42,15 +44,69 @@ PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateLambda([Register
 		}));
 }
 
-void UOnlineManager::SignInUser(FLoginCallback LoginCallback, FString Email, FString Password)
+void UOnlineManager::SetPlayerData(FSetPlayerDataCallback SetPlayerDataCallback, TMap<FString, FString> Data)
 {
+	PlayFab::ClientModels::FUpdateUserDataRequest Request;
+	Request.Data = Data;
+	
+	m_clientAPI->UpdateUserData(Request, PlayFab::UPlayFabClientAPI::FUpdateUserDataDelegate::CreateLambda([SetPlayerDataCallback](const PlayFab::ClientModels::FUpdateUserDataResult& result)
+	{
+		if(SetPlayerDataCallback.IsBound())
+			SetPlayerDataCallback.Execute(true, "Set User Data Succeded");
+	}),
+		PlayFab::FPlayFabErrorDelegate::CreateLambda([SetPlayerDataCallback](const PlayFab::FPlayFabCppError& error)
+	{
+			if(SetPlayerDataCallback.IsBound())
+				SetPlayerDataCallback.Execute(false, error.ErrorMessage);
+	}));
+}
+
+void UOnlineManager::GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback)
+{
+	if(!m_clientAPI || !IsPlayerLoggedIn())
+		return;
+	
+	PlayFab::ClientModels::FGetUserDataRequest Request;
+	Request.PlayFabId = m_playerPlayFabID;
+
+	m_clientAPI->GetUserData(Request, PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateLambda([GetPlayerDataCallback](const PlayFab::ClientModels::FGetUserDataResult Result)
+	{
+		FString ret = "Ret keys : ";
+		for(auto values : Result.Data)
+		{
+			ret.Append(values.Key).Append(" / "); 
+		}
+
+		if(GetPlayerDataCallback.IsBound())
+			GetPlayerDataCallback.Execute(true, ret);
+	}), PlayFab::FPlayFabErrorDelegate::CreateLambda([GetPlayerDataCallback](const PlayFab::FPlayFabCppError& error)
+	{
+		if(GetPlayerDataCallback.IsBound())
+			GetPlayerDataCallback.Execute(false, error.ErrorMessage);
+	}
+	));
+}
+
+bool UOnlineManager::IsPlayerLoggedIn()
+{
+	return m_playerLogged;
+}
+
+void UOnlineManager::SignInWithEmail(FLoginCallback LoginCallback, FString Email, FString Password)
+{
+	if(!m_clientAPI)
+		return;
+	
 	PlayFab::ClientModels::FLoginWithEmailAddressRequest Request;
 	Request.Email = Email;
 	Request.Password = Password;
 
 	m_clientAPI->LoginWithEmailAddress(Request,
-	PlayFab::UPlayFabClientAPI::FLoginWithEmailAddressDelegate::CreateLambda([LoginCallback](const PlayFab::ClientModels::FLoginResult& result)
+	PlayFab::UPlayFabClientAPI::FLoginWithEmailAddressDelegate::CreateLambda([LoginCallback, this](const PlayFab::ClientModels::FLoginResult& result)
 		{
+			m_playerLogged = true;
+			m_playerPlayFabID = result.PlayFabId;
+		
 			if(LoginCallback.IsBound())
 				LoginCallback.Execute(true, "Login Succeded");
 		}), PlayFab::FPlayFabErrorDelegate::CreateLambda([LoginCallback](const PlayFab::FPlayFabCppError& error)
@@ -59,5 +115,3 @@ void UOnlineManager::SignInUser(FLoginCallback LoginCallback, FString Email, FSt
 				LoginCallback.Execute(false, error.ErrorMessage);
 		}));
 }
-
-

@@ -11,6 +11,8 @@
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FLoginCallback, bool, HasSucceeded, FString, Msg);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FRegisterCallback, bool, HasSucceeded, FString, Msg);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FSetPlayerDataCallback, bool, HasSucceeded, FString, Msg);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FGetPlayerDataCallback, bool, HasSucceeded, FString, Msg);
 
 /**
  * 
@@ -28,14 +30,25 @@ class UOnlineManager : public UGameInstanceSubsystem
 public:
 	
 	UFUNCTION(BlueprintCallable)
-	void SignInUser(FLoginCallback LoginCallback, FString Email, FString Password);
+	void SignInWithEmail(FLoginCallback LoginCallback, FString Email, FString Password);
 
 	UFUNCTION(BlueprintCallable)
 	void RegisterNewUser(FRegisterCallback RegisterCallback, FString Email, FString Password, FString UserName);
 
-private:
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerData(FSetPlayerDataCallback SetPlayerDataCallback, TMap<FString, FString> Data);
+
+	UFUNCTION(BlueprintCallable)
+	void GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsPlayerLoggedIn();
 	
 private:
-  	PlayFabClientPtr m_clientAPI = nullptr; 	
+  	PlayFabClientPtr m_clientAPI = nullptr;
 
+	// Player related data
+	bool m_playerLogged;
+	FString m_playerPlayFabID;
+	
 };
