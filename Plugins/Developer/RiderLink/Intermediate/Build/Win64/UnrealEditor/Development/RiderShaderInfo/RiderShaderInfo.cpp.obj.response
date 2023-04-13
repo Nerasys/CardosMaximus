@@ -1,4 +1,4 @@
-D:\Work\Learning\LearningOnline\CardosMaximus\Plugins\Developer\RiderLink\Source\RiderShaderInfo\RiderShaderInfo.cpp
+C:\Projects\Cards\CardosMaximus\Plugins\Developer\RiderLink\Source\RiderShaderInfo\RiderShaderInfo.cpp
 /I .
 /I Runtime
 /I Runtime\TraceLog\Public
@@ -7,17 +7,17 @@ D:\Work\Learning\LearningOnline\CardosMaximus\Plugins\Developer\RiderLink\Source
 /I Runtime\Json\Public
 /I Runtime\RenderCore\Public
 /I Runtime\RHI\Public
-/I D:\Work\Learning\LearningOnline\CardosMaximus\Plugins\Developer\RiderLink\Source
+/I C:\Projects\Cards\CardosMaximus\Plugins\Developer\RiderLink\Source
 /external:W0
 /external:I ThirdParty\mimalloc\include
-/external:I "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\INCLUDE"
+/external:I "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\INCLUDE"
 /external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"
 /external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"
 /external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"
 /external:I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"
-/FI"D:\Work\Learning\LearningOnline\CardosMaximus\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\Definitions.h"
-/Fo"D:\Work\Learning\LearningOnline\CardosMaximus\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
-/sourceDependencies D:\Work\Learning\LearningOnline\CardosMaximus\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.dep.json
+/FI"C:\Projects\Cards\CardosMaximus\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\Definitions.h"
+/Fo"C:\Projects\Cards\CardosMaximus\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+/sourceDependencies C:\Projects\Cards\CardosMaximus\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.dep.json
 /Zc:inline
 /nologo
 /Oi
