@@ -14,6 +14,8 @@ void UOnlineManager::Initialize(FSubsystemCollectionBase& Collection)
 	// PlayFab init
 	m_clientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 	UPlayFabUtilities::setPlayFabSettings("916E4", "B91YQQJRZ8JGBY7UTCSZXPY419PQ9Y743A6R96MXB18GJOTE85");
+
+	Init();
 }
 
 void UOnlineManager::Deinitialize()
@@ -21,7 +23,7 @@ void UOnlineManager::Deinitialize()
 	Super::Deinitialize();
 }
 
-void UOnlineManager::RegisterNewUser(FRegisterCallback RegisterCallback, FString Email, FString Password, FString UserName)
+void UOnlineManager::RegisterNewUser(FRequestCallback RegisterCallback, FString Email, FString Password, FString UserName)
 {
 	if(!m_clientAPI)
 		return;
@@ -44,7 +46,7 @@ PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateLambda([Register
 		}));
 }
 
-void UOnlineManager::SetPlayerData(FSetPlayerDataCallback SetPlayerDataCallback, TMap<FString, FString> Data)
+void UOnlineManager::SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<FString, FString> Data)
 {
 	PlayFab::ClientModels::FUpdateUserDataRequest Request;
 	Request.Data = Data;
@@ -61,7 +63,7 @@ void UOnlineManager::SetPlayerData(FSetPlayerDataCallback SetPlayerDataCallback,
 	}));
 }
 
-void UOnlineManager::GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback)
+void UOnlineManager::GetPlayerData(FRequestCallback GetPlayerDataCallback)
 {
 	if(!m_clientAPI || !IsPlayerLoggedIn())
 		return;
@@ -87,7 +89,7 @@ void UOnlineManager::GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback)
 	));
 }
 
-void UOnlineManager::GetPlayerInventory(FGetPlayerInventoryCallback GetPlayerInventoryCallback)
+void UOnlineManager::GetPlayerInventory(FRequestCallback GetPlayerInventoryCallback)
 {
 	if(!m_clientAPI || !IsPlayerLoggedIn())
 		return;
@@ -118,7 +120,7 @@ bool UOnlineManager::IsPlayerLoggedIn()
 	return m_playerLogged;
 }
 
-void UOnlineManager::SignInWithEmail(FLoginCallback LoginCallback, FString Email, FString Password)
+void UOnlineManager::SignInWithEmail(FRequestCallback LoginCallback, FString Email, FString Password)
 {
 	if(!m_clientAPI)
 		return;

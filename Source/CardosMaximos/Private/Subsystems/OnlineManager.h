@@ -9,11 +9,7 @@
 #include "PlayFabError.h"
 #include "OnlineManager.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FLoginCallback, bool, HasSucceeded, FString, Msg);
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FRegisterCallback, bool, HasSucceeded, FString, Msg);
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FSetPlayerDataCallback, bool, HasSucceeded, FString, Msg);
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FGetPlayerDataCallback, bool, HasSucceeded, FString, Msg);
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FGetPlayerInventoryCallback, bool, HasSucceeded, FString, Msg);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FRequestCallback, bool, HasSucceeded, FString, Msg);
 
 /**
  * 
@@ -29,21 +25,24 @@ class UOnlineManager : public UGameInstanceSubsystem
    	// --------
 
 public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Init();
 	
 	UFUNCTION(BlueprintCallable)
-	void SignInWithEmail(FLoginCallback LoginCallback, FString Email, FString Password);
+	void SignInWithEmail(FRequestCallback LoginCallback, FString Email, FString Password);
 
 	UFUNCTION(BlueprintCallable)
-	void RegisterNewUser(FRegisterCallback RegisterCallback, FString Email, FString Password, FString UserName);
+	void RegisterNewUser(FRequestCallback RegisterCallback, FString Email, FString Password, FString UserName);
 
 	UFUNCTION(BlueprintCallable)
-	void SetPlayerData(FSetPlayerDataCallback SetPlayerDataCallback, TMap<FString, FString> Data);
+	void SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<FString, FString> Data);
 
 	UFUNCTION(BlueprintCallable)
-	void GetPlayerData(FGetPlayerDataCallback GetPlayerDataCallback);
+	void GetPlayerData(FRequestCallback GetPlayerDataCallback);
 
 	UFUNCTION(BlueprintCallable)
-	void GetPlayerInventory(FGetPlayerInventoryCallback GetPlayerInventoryCallback);
+	void GetPlayerInventory(FRequestCallback GetPlayerInventoryCallback);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsPlayerLoggedIn();
