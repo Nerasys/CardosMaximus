@@ -3,6 +3,7 @@
 .vsconfig
 .idea
 
+
 # Compiled Object files
 *.slo
 *.lo
@@ -51,6 +52,8 @@ SourceArt/**/*.tga
 Binaries/*
 Plugins/*/Binaries/*
 
+Plugins/Developer/RiderLink/Binaries/*
+Plugins/Developer/RiderLink/Intermediate/*
 # Builds
 Build/*
 
