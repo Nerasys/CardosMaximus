@@ -15,6 +15,8 @@ void UOnlineManager::Initialize(FSubsystemCollectionBase& Collection)
 	m_clientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 	UPlayFabUtilities::setPlayFabSettings("916E4", "B91YQQJRZ8JGBY7UTCSZXPY419PQ9Y743A6R96MXB18GJOTE85");
 
+	m_playerData = NewObject<UPlayerData>();
+
 	Init();
 }
 
@@ -63,28 +65,30 @@ void UOnlineManager::SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<
 	}));
 }
 
-void UOnlineManager::GetPlayerData(FRequestCallback GetPlayerDataCallback)
+void UOnlineManager::RetrivePlayerData(FRequestCallback RetrivePlayerDataCallback)
 {
 	if(!m_clientAPI || !IsPlayerLoggedIn())
 		return;
 	
 	PlayFab::ClientModels::FGetUserDataRequest Request;
-	Request.PlayFabId = m_playerPlayFabID;
+	Request.PlayFabId = m_playerData->GetPlayFabID();
 
-	m_clientAPI->GetUserData(Request, PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateLambda([GetPlayerDataCallback](const PlayFab::ClientModels::FGetUserDataResult Result)
+	m_clientAPI->GetUserData(Request, PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateLambda([RetrivePlayerDataCallback, this](const PlayFab::ClientModels::FGetUserDataResult Result)
 	{
-		FString ret = "Ret keys : ";
-		for(auto values : Result.Data)
+		for(auto Data : Result.Data)
 		{
-			ret.Append(values.Key).Append(" / "); 
+			m_playerData->AddData(Data.Key, Data.Value.Value);
 		}
-
-		if(GetPlayerDataCallback.IsBound())
-			GetPlayerDataCallback.Execute(true, ret);
-	}), PlayFab::FPlayFabErrorDelegate::CreateLambda([GetPlayerDataCallback](const PlayFab::FPlayFabCppError& error)
+		
+		FString ret = "Player Data retrieved sucessfully";
+		
+		if(RetrivePlayerDataCallback.IsBound())
+			RetrivePlayerDataCallback.Execute(true, ret);
+		
+	}), PlayFab::FPlayFabErrorDelegate::CreateLambda([RetrivePlayerDataCallback](const PlayFab::FPlayFabCppError& error)
 	{
-		if(GetPlayerDataCallback.IsBound())
-			GetPlayerDataCallback.Execute(false, error.ErrorMessage);
+		if(RetrivePlayerDataCallback.IsBound())
+			RetrivePlayerDataCallback.Execute(false, error.ErrorMessage);
 	}
 	));
 }
@@ -117,7 +121,12 @@ void UOnlineManager::GetPlayerInventory(FRequestCallback GetPlayerInventoryCallb
 
 bool UOnlineManager::IsPlayerLoggedIn()
 {
-	return m_playerLogged;
+	return m_playerData->IsPlayerLoggedIn();
+}
+
+UPlayerData* UOnlineManager::GetPlayerData()
+{
+	return m_playerData;
 }
 
 void UOnlineManager::SignInWithEmail(FRequestCallback LoginCallback, FString Email, FString Password)
@@ -132,8 +141,8 @@ void UOnlineManager::SignInWithEmail(FRequestCallback LoginCallback, FString Ema
 	m_clientAPI->LoginWithEmailAddress(Request,
 	PlayFab::UPlayFabClientAPI::FLoginWithEmailAddressDelegate::CreateLambda([LoginCallback, this](const PlayFab::ClientModels::FLoginResult& result)
 		{
-			m_playerLogged = true;
-			m_playerPlayFabID = result.PlayFabId;
+			m_playerData->SetPlayerLoggedIn(true);
+			m_playerData->SetPlayFabID(result.PlayFabId);
 		
 			if(LoginCallback.IsBound())
 				LoginCallback.Execute(true, "Login Succeded");

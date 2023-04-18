@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PlayFab.h"
 #include "PlayFabClientDataModels.h"
@@ -28,6 +29,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Init();
+
+	UFUNCTION(BlueprintCallable)
+	UPlayerData* GetPlayerData();
 	
 	UFUNCTION(BlueprintCallable)
 	void SignInWithEmail(FRequestCallback LoginCallback, FString Email, FString Password);
@@ -36,10 +40,10 @@ public:
 	void RegisterNewUser(FRequestCallback RegisterCallback, FString Email, FString Password, FString UserName);
 
 	UFUNCTION(BlueprintCallable)
-	void SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<FString, FString> Data);
-
+	void RetrivePlayerData(FRequestCallback RetrivePlayerDataCallback);
+	
 	UFUNCTION(BlueprintCallable)
-	void GetPlayerData(FRequestCallback GetPlayerDataCallback);
+	void SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<FString, FString> Data);
 
 	UFUNCTION(BlueprintCallable)
 	void GetPlayerInventory(FRequestCallback GetPlayerInventoryCallback);
@@ -48,10 +52,8 @@ public:
 	bool IsPlayerLoggedIn();
 
 private:
-  	PlayFabClientPtr m_clientAPI = nullptr;
 
-	// Player related data
-	bool m_playerLogged;
-	FString m_playerPlayFabID;
-	
+private:
+  	PlayFabClientPtr m_clientAPI = nullptr;
+	UPlayerData* m_playerData = nullptr;
 };
