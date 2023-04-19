@@ -63,6 +63,17 @@ void UCard::SetP_Currencies(const TArray<int>& P_Currencies)
 	p_currencies = P_Currencies;
 }
 
+UCard* UCard::CreateNewCard(int ID, FString Name, FString Description, FString PathImg, FString ItemClass)
+{
+	UCard* card(NewObject<UCard>());
+	card->SetP_Name(Name);
+	card->SetP_ID(ID);
+	card->SetP_Description(Description);
+	card->SetP_PathImg(PathImg);
+	card->SetP_ItemClass(ItemClass);
+	return card;
+}
+
 UCard::UCard()
 {
 }

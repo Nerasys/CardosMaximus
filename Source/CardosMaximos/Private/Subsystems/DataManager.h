@@ -29,7 +29,7 @@ public:
 
 
 private:
-	TArray<UCard*> ListCardsEpic;
+	 TArray<UCard*> ListCardsEpic;
 	 TArray<UCard*> ListCardsLegendary;
 	 TArray<UCard*> ListCardsCommon;
 	
