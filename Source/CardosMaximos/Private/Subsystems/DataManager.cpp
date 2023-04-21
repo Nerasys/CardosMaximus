@@ -27,7 +27,7 @@ void UDataManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 
 	Super::Initialize(Collection);
-	
+
 	UCard* card1 = UCard::CreateNewCard(1,"Nathan","La premiere carte");
 	UCard* card2 = UCard::CreateNewCard(2,"Sylvain","La seconde carte");
 	UCard* card3 = UCard::CreateNewCard(3,"Jules","La troisieme carte");
@@ -56,7 +56,6 @@ void UDataManager::Initialize(FSubsystemCollectionBase& Collection)
 	ListCardsCommon.Add(card11);
 	ListCardsCommon.Add(card12);
 	ListCardsCommon.Add(card13);
-
 }
 
 void UDataManager::Deinitialize()
