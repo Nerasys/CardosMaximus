@@ -40,7 +40,7 @@ public:
 	void RegisterNewUser(FRequestCallback RegisterCallback, FString Email, FString Password, FString UserName);
 
 	UFUNCTION(BlueprintCallable)
-	void RetrivePlayerData(FRequestCallback RetrivePlayerDataCallback);
+	void FetchPlayerData();
 	
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<FString, FString> Data);

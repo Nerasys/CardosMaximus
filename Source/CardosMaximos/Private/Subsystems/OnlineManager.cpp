@@ -65,7 +65,7 @@ void UOnlineManager::SetPlayerData(FRequestCallback SetPlayerDataCallback, TMap<
 	}));
 }
 
-void UOnlineManager::RetrivePlayerData(FRequestCallback RetrivePlayerDataCallback)
+void UOnlineManager::FetchPlayerData()
 {
 	if(!m_clientAPI || !IsPlayerLoggedIn())
 		return;
@@ -73,22 +73,18 @@ void UOnlineManager::RetrivePlayerData(FRequestCallback RetrivePlayerDataCallbac
 	PlayFab::ClientModels::FGetUserDataRequest Request;
 	Request.PlayFabId = m_playerData->GetPlayFabID();
 
-	m_clientAPI->GetUserData(Request, PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateLambda([RetrivePlayerDataCallback, this](const PlayFab::ClientModels::FGetUserDataResult Result)
+	m_clientAPI->GetUserData(Request, PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateLambda([this](const PlayFab::ClientModels::FGetUserDataResult Result)
 	{
 		for(auto Data : Result.Data)
 		{
 			m_playerData->AddData(Data.Key, Data.Value.Value);
 		}
-		
-		FString ret = "Player Data retrieved sucessfully";
-		
-		if(RetrivePlayerDataCallback.IsBound())
-			RetrivePlayerDataCallback.Execute(true, ret);
-		
-	}), PlayFab::FPlayFabErrorDelegate::CreateLambda([RetrivePlayerDataCallback](const PlayFab::FPlayFabCppError& error)
+
+		// Fetch data succeeded 
+	}), PlayFab::FPlayFabErrorDelegate::CreateLambda([](const PlayFab::FPlayFabCppError& error)
 	{
-		if(RetrivePlayerDataCallback.IsBound())
-			RetrivePlayerDataCallback.Execute(false, error.ErrorMessage);
+		
+		// Fetch data failed
 	}
 	));
 }
@@ -143,7 +139,8 @@ void UOnlineManager::SignInWithEmail(FRequestCallback LoginCallback, FString Ema
 		{
 			m_playerData->SetPlayerLoggedIn(true);
 			m_playerData->SetPlayFabID(result.PlayFabId);
-		
+			FetchPlayerData();
+
 			if(LoginCallback.IsBound())
 				LoginCallback.Execute(true, "Login Succeded");
 		}), PlayFab::FPlayFabErrorDelegate::CreateLambda([LoginCallback](const PlayFab::FPlayFabCppError& error)
